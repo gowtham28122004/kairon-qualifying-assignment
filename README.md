@@ -103,11 +103,13 @@ Generated bash
 pip install -r requirements.txt
 Use code with caution.
 Bash
+
 4. Configure your API Keys:
 Find the .env.example file in the project folder.
 Rename it to simply .env.
 Open the new .env file and paste your personal API keys for GOOGLE_API_KEY and TAVILY_API_KEY. The LangSmith key is optional but highly recommended for debugging.
 ⚠️ Important Security Note: The .gitignore file is configured to prevent your .env file from ever being uploaded to GitHub. Never share your .env file publicly.
+
 6. How to Run the Application
 Once the setup is complete and your virtual environment is active, run the following command in your terminal:
 Generated bash
@@ -115,7 +117,8 @@ streamlit run app.py
 Use code with caution.
 Bash
 Your default web browser will automatically open a new tab with the application interface, ready for you to start your research.
-7. Unique Perspectives & Future Improvements
+
+8. Unique Perspectives & Future Improvements
 To address the assignment's call for imagination, here are several ways this system could be enhanced:
 Parallel Research: The current research loop is sequential. LangGraph supports parallel execution, so multiple Researcher Agents could tackle different sub-questions simultaneously, drastically reducing total research time.
 Human-in-the-Loop Feedback: Before the Writer Agent drafts the final report, the system could present the user with the research findings and ask for validation. The user could flag a specific answer as "incomplete" or "incorrect," triggering a targeted re-research step for that point.
