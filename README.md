@@ -108,7 +108,6 @@ Bash
 Find the .env.example file in the project folder.
 Rename it to simply .env.
 Open the new .env file and paste your personal API keys for GOOGLE_API_KEY and TAVILY_API_KEY. The LangSmith key is optional but highly recommended for debugging.
-⚠️ Important Security Note: The .gitignore file is configured to prevent your .env file from ever being uploaded to GitHub. Never share your .env file publicly.
 
 6. How to Run the Application
 Once the setup is complete and your virtual environment is active, run the following command in your terminal:
