@@ -1,35 +1,44 @@
-# --- CRITICAL: LOAD ENV VARS FIRST ---
-# This must be the very first thing to run so that all other modules
-# can access the environment variables from the .env file.
+# app.py (Improved Version)
+
+import streamlit as st
 from dotenv import load_dotenv
+import os
+
+# --- Step 1: Load environment variables and check keys AT THE VERY TOP ---
+# This is the most important change. We do this before any other project imports.
 load_dotenv()
 
-# Now we can import the rest of our modules
-import streamlit as st
-import os
-from graph.builder import build_graph
+# Check for necessary API keys BEFORE trying to import any modules that use them.
+openai_api_key = os.getenv("OPENAI_API_KEY")
+tavily_api_key = os.getenv("TAVILY_API_KEY")
 
-# Check for necessary API keys (Changed to GOOGLE_API_KEY)
-if not os.getenv("GOOGLE_API_KEY") or not os.getenv("TAVILY_API_KEY"):
-    st.error("🚨 Please check your .env file. It must contain GOOGLE_API_KEY and TAVILY_API_KEY.")
+if not openai_api_key or not tavily_api_key:
+    st.title("🚨 API Key Error")
+    st.error(
+        "One or more required API keys (OPENAI_API_KEY, TAVILY_API_KEY) are missing. "
+        "If you are running this on Streamlit Cloud, please add them to your Secrets. "
+        "If running locally, ensure they are in your .env file."
+    )
     st.stop()
 
-# Build the graph
+
+# --- Step 2: Now that keys are verified, import the graph builder ---
+# This import will now only run if the keys exist, preventing the Pydantic error.
 try:
+    from graph.builder import build_graph
     graph = build_graph()
 except Exception as e:
     st.error(f"Failed to build the graph: {e}")
-    st.exception(e) # Print full traceback for debugging
     st.stop()
 
 
-# --- Streamlit UI ---
-st.set_page_config(page_title="Deep Research AI Agent (Gemini Edition)", layout="wide")
+# --- Step 3: The rest of the Streamlit UI ---
+st.set_page_config(page_title="Deep Research AI Agent", layout="wide")
 
-st.title("🧠 Deep Research AI Agent (Gemini Edition)")
+st.title("🧠 Deep Research AI Agent")
 st.markdown("""
 This AI agent performs deep research on a given topic by planning, searching, and synthesizing information 
-into a comprehensive report using Google's Gemini Pro.
+into a comprehensive report.
 """)
 
 st.sidebar.header("How it works")
@@ -37,7 +46,7 @@ st.sidebar.info("""
 1.  **Planner Agent:** Breaks down the topic into a research plan.
 2.  **Researcher Agent:** Searches the web (Tavily) and scrapes content for each point in the plan.
 3.  **Writer Agent:** Compiles the gathered information into a final report.
-The entire process is orchestrated using LangGraph and powered by Google Gemini.
+The entire process is orchestrated using LangGraph.
 """)
 
 topic = st.text_input(
@@ -59,13 +68,10 @@ if st.button("Start Research"):
                     "final_report": ""
                 }
                 
-                # Use a status container to show progress
                 status = st.status("Kicking off the research process...", expanded=True)
                 final_state = None
                 
-                # Stream the graph execution
-                for event in graph.stream(initial_state):
-                    # The event key is the name of the node that just finished
+                for event in graph.stream(initial_state, {"recursion_limit": 25}):
                     node_name = list(event.keys())[0]
                     node_output = event[node_name]
                     
@@ -85,5 +91,4 @@ if st.button("Start Research"):
                 st.markdown(final_state['final_report'])
 
             except Exception as e:
-                st.error(f"An error occurred during the research process:")
-                st.exception(e) # This will print the full traceback for easier debugging
+                st.error(f"An error occurred during the research process: {e}")
