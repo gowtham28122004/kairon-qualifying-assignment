@@ -51,3 +51,5 @@ graph TD
 - **Online Search Tool**: **Tavily AI**, integrated via `langchain-community` for fast, accurate, and AI-optimized search results.
 - **Web Scraping**: **BeautifulSoup4** & **Requests**, built into a custom LangChain tool for on-demand content extraction.
 - **Environment Management**: **`python-dotenv`** for securely managing API keys without hard-coding them.
+
+Streamlit app : https://kairon-qualifying-assignment-xps64prcu7q54nnnac5zft.streamlit.app/
